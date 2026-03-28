@@ -1,0 +1,15 @@
+#ifndef FT_MALLOC_H
+#define FT_MALLOC_H
+
+#include <stdlib.h>
+typedef struct s_list_gc {
+  void *address;
+  struct s_list_gc *next;
+} t_list_gc;
+
+void ft_panic(void *ptr);
+void free_all(void);
+void *ft_malloc(size_t size);
+t_list_gc **get_manger(void);
+
+#endif
