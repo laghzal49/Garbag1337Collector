@@ -14,11 +14,13 @@
 # define FT_MALLOC_H
 
 # include <stdlib.h>
+# include <pthread.h>
 
 typedef struct s_list_gc
 {
 	struct s_list_gc	*prev;
 	struct s_list_gc	*next;
+	pthread_t			thread;
 }	t_list_gc;
 
 void		ft_panic(void *ptr);
@@ -26,5 +28,6 @@ void		free_all(void);
 void		*ft_malloc(size_t size);
 t_list_gc	**get_manger(void);
 void		ft_free(void *ptr);
+pthread_mutex_t	*get_malloc_mutex(void);
 
 #endif

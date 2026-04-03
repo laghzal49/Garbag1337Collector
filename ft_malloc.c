@@ -20,18 +20,30 @@ t_list_gc	**get_manger(void)
 	return (&gc);
 }
 
+pthread_mutex_t	*get_malloc_mutex(void)
+{
+	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
+
+	return (&mutex);
+}
+
 void	*ft_malloc(size_t size)
 {
 	t_list_gc	*node;
 
+	pthread_mutex_lock(get_malloc_mutex());
 	node = malloc(sizeof(t_list_gc) + size);
 	if (!node)
+	{
+		pthread_mutex_unlock(get_malloc_mutex());
 		return (NULL);
+	}
 	node->next = *get_manger();
 	node->prev = NULL;
 	if (*get_manger() != NULL)
 		(*get_manger())->prev = node;
 	*get_manger() = node;
+	pthread_mutex_unlock(get_malloc_mutex());
 	return (node + 1);
 }
 
@@ -40,6 +52,7 @@ void	free_all(void)
 	t_list_gc	*curr;
 	t_list_gc	*next;
 
+	pthread_mutex_lock(get_malloc_mutex());
 	curr = *get_manger();
 	while (curr)
 	{
@@ -48,6 +61,7 @@ void	free_all(void)
 		curr = next;
 	}
 	*get_manger() = NULL;
+	pthread_mutex_unlock(get_malloc_mutex());
 }
 
 void	ft_panic(void *ptr)
@@ -64,6 +78,7 @@ void	ft_free(void *ptr)
 
 	if (!ptr)
 		return ;
+	pthread_mutex_lock(get_malloc_mutex());
 	node = (t_list_gc *)ptr - 1;
 	if (node->prev)
 		node->prev->next = node->next;
@@ -72,4 +87,5 @@ void	ft_free(void *ptr)
 	if (node->next)
 		node->next->prev = node->prev;
 	free(node);
+	pthread_mutex_unlock(get_malloc_mutex());
 }
