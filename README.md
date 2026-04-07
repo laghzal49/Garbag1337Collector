@@ -1,4 +1,4 @@
-# ft_malloc - A C Garbage Collector
+# Garbag1337Collector - A C Garbage Collector
 
 A custom thread-safe memory allocator with garbage collection capabilities for C.
 
